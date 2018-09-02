@@ -23,7 +23,6 @@ res.locals.connection.connect();
  next();
 });
 
-
 app.get("/filmes", (request, response) => {
   response.locals.connection.query('SELECT * from filmes', function (error, results, fields) {
 		if (error) throw error;
@@ -34,36 +33,48 @@ app.get("/filmes", (request, response) => {
 app.post('/filmes', (request, response) => {
     const { body } = request;
 
-    const filmes = {
-        id: Math.random().toString().replace('0.', ''),
-        titulo: body.titulo,
-        isDone: body.isDone,
-    };
+    const filme ={
+        id: 1,
+        nome: "Clube da luta",
+        diretor: "David Fincher",
+        genero: "drama",
+        classificacao: 18
+    }
 
-    /* TODO: INSERIR REGISTRO NO BD */
-    filmes.push(filmes);
-    response.status(201);
-    response.send(filmes);
+    response.locals.connection.query(
+        "INSERT INTO filmes SET ?", filme,
+        function (error, results, fields) {
+            if (error) {
+                response.status(404);
+                response.send();
+            }else{
+                response.locals.connection.query('SELECT * FROM filmes',
+                function (error, results, fields) {
+                    if (error){
+                        response.status(404);
+                        response.send();
+                    }else{
+                        response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
+                    } 
+                  });
+            }
+        });
 });
 
 app.delete('/filmes/:id', (request, response) => {
-    /*
-        TODO: PROCURAR ARQUIVO NO BANCO
-        SELECT * FROM filmes WHERE id = filme.id
-    */
-    const filme = filmes.find(t => t.id == request.params.id);
-
-    if (filme) {
-        /* 
-            TODO: APAGAR REGISTRO NO BD
-            DELETE FROM filmes WHERE id = filme.id
-        */
-        filmes.pop(filme);
-        response.send(filmes);
-    } else {
-        response.status(404);
-        response.send();
-    }
+    response.locals.connection.query(
+        'DELETE FROM filmes WHERE id = ' + request.params.id,
+        function (error, results, fields) {
+            if (error) {
+                response.status(404);
+                response.send();
+            }else{
+                response.locals.connection.query('SELECT * from filmes', function (error, results, fields) {
+                    if (error) throw error;
+                      response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
+                  });
+            }
+        });
 });
 
 
