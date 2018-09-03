@@ -25,10 +25,27 @@ res.locals.connection.connect();
 
 app.get("/filmes", (request, response) => {
   response.locals.connection.query('SELECT * from filmes', function (error, results, fields) {
-		if (error) throw error;
-		  response.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+        if (error) {
+            response.status(404);
+            response.send();
+        }else{
+          response.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+        }
 	  });
 });
+
+app.get("/filmes/:id", (request, response) => {
+    const { body } = request;
+
+    response.locals.connection.query('SELECT * from filmes WHERE id=?', [body.id], function (error, results, fields) {
+            if (error) {
+                response.status(404);
+                response.send();
+            }else{
+                response.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+            }
+        });
+  });
 
 app.post('/filmes', (request, response) => {
 
@@ -70,13 +87,30 @@ app.delete('/filmes/:id', (request, response) => {
                 response.send();
             }else{
                 response.locals.connection.query('SELECT * from filmes', function (error, results, fields) {
-                    if (error) throw error;
-                      response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
+                    if (error) {
+                        response.status(404);
+                        response.send();
+                    }else{
+                        response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
+                    }
                   });
             }
         });
 });
 
+app.put('/filmes/:id', function (request, response) {
+
+    const { body } = request;
+
+    response.locals.connection.query('UPDATE filmes SET nome=?, diretor=?, genero=?, classificacao=? where id=?', [body.nome, body.diretor, body.genero, body.classificacao, request.params.id], function (error, results, fields) {
+        if (error) {
+            response.status(404);
+            response.send();
+        }else{
+            response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
+        }
+  });
+ });
 
 app.listen(3000, () => {
     console.log("Server running on port 3000");
