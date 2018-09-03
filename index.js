@@ -31,15 +31,15 @@ app.get("/filmes", (request, response) => {
 });
 
 app.post('/filmes', (request, response) => {
+
     const { body } = request;
 
-    const filme ={
-        id: 1,
-        nome: "Clube da luta",
-        diretor: "David Fincher",
-        genero: "drama",
-        classificacao: 18
-    }
+    const filme = {
+        nome: body.nome,
+        diretor: body.diretor,
+        genero: body.genero,
+        classificacao: body.classificacao
+    };
 
     response.locals.connection.query(
         "INSERT INTO filmes SET ?", filme,

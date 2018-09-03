@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Sep 01, 2018 at 04:51 AM
+-- Generation Time: Sep 03, 2018 at 02:16 PM
 -- Server version: 5.5.42
 -- PHP Version: 5.5.26
 
@@ -32,14 +32,15 @@ CREATE TABLE `filmes` (
   `diretor` varchar(50) NOT NULL,
   `genero` varchar(50) NOT NULL,
   `classificacao` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `filmes`
 --
 
 INSERT INTO `filmes` (`id`, `nome`, `diretor`, `genero`, `classificacao`) VALUES
-(1, 'Clube da Luta', 'David Fincher', 'Drama', 18);
+(1, 'Clube da Luta', 'David Fincher', 'Drama', 18),
+(7, 'Pulp Fiction', 'Tarantino', 'Ação', 18);
 
 --
 -- Indexes for dumped tables
@@ -51,6 +52,15 @@ INSERT INTO `filmes` (`id`, `nome`, `diretor`, `genero`, `classificacao`) VALUES
 ALTER TABLE `filmes`
   ADD PRIMARY KEY (`id`);
 
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `filmes`
+--
+ALTER TABLE `filmes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
