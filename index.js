@@ -16,7 +16,7 @@ app.use((req, res, next) => {
  res.locals.connection = mysql.createConnection({
  host: "localhost",
  user: "root",
- password: "root",
+ password: "",
  database: "trabalho_final_backend"
  });
 res.locals.connection.connect();
@@ -24,7 +24,7 @@ res.locals.connection.connect();
 });
 
 app.get("/filmes", (request, response) => {
-  response.locals.connection.query('SELECT * from filmes', function (error, results, fields) {
+  response.locals.connection.query('SELECT * FROM filmes', function (error, results, fields) {
         if (error) {
             response.status(404);
             response.send();
@@ -35,9 +35,9 @@ app.get("/filmes", (request, response) => {
 });
 
 app.get("/filmes/:id", (request, response) => {
-    const { body } = request;
-
-    response.locals.connection.query('SELECT * from filmes WHERE id=?', [body.id], function (error, results, fields) {
+    response.locals.connection.query(
+        'SELECT * FROM filmes WHERE id = ' + request.params.id,
+        function (error, results, fields) {
             if (error) {
                 response.status(404);
                 response.send();
@@ -102,14 +102,37 @@ app.put('/filmes/:id', function (request, response) {
 
     const { body } = request;
 
-    response.locals.connection.query('UPDATE filmes SET nome=?, diretor=?, genero=?, classificacao=? where id=?', [body.nome, body.diretor, body.genero, body.classificacao, request.params.id], function (error, results, fields) {
-        if (error) {
-            response.status(404);
-            response.send();
-        }else{
-            response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
-        }
-  });
+    response.locals.connection.query(
+        'SELECT * FROM filmes WHERE id = ' + request.params.id,
+        function (error, results, fields) {
+            if (error) {
+                response.status(404);
+                response.send();
+            }else{
+
+                if(body.nome == '' || body.nome == undefined){
+                    body.nome = results[0].nome;
+                }
+                if(body.diretor == '' || body.diretor == undefined){
+                    body.diretor = results[0].diretor;
+                }
+                if(body.genero == '' || body.genero == undefined){
+                    body.genero = results[0].genero;
+                }
+                if(body.classificacao == '' || body.classificacao == undefined){
+                    body.classificacao = results[0].classificacao;
+                }
+
+                response.locals.connection.query('UPDATE filmes SET nome=?, diretor=?, genero=?, classificacao=? where id=?', [body.nome, body.diretor, body.genero, body.classificacao, request.params.id], function (error, results, fields) {
+                    if (error) {
+                        response.status(404);
+                        response.send();
+                    }else{
+                        response.send(JSON.stringify({"status": 201, "error": null, "response": results}));
+                    }
+                });
+            }
+        });
  });
 
 app.listen(3000, () => {
