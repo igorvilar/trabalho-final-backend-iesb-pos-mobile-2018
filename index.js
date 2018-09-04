@@ -131,7 +131,7 @@ app.put('/filmes/:id', function (request, response) {
             }
         });
  });
- app.path('/filmes/:id', function (request, response) {
+ app.patch('/filmes/:id', function (request, response) {
 
     const { body } = request;
 
